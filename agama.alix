@@ -1,0 +1,7 @@
+project_name = Agama
+source_dir = src
+config_dir = config
+path_unit = { unit = Css.Paths
+              path = src/css-paths.ads }
+depend = { project = wlib version = any }
+depend = { project = gcs version = any }

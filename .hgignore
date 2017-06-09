@@ -1,0 +1,10 @@
+syntax: glob
+*.o
+*.ali
+*~
+b~*.ad[bs]
+build/bin/*
+build/obj/*
+*.orig
+src/css-paths.ads
+agama.gpr
