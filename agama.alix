@@ -5,3 +5,4 @@ path_unit = { unit = Css.Paths
               path = src/css-paths.ads }
 depend = { project = wlib version = any }
 depend = { project = gcs version = any }
+depend = { project = GtkAda external = yes }
