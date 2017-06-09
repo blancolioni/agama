@@ -2,12 +2,12 @@ with Glib;
 with Cairo.Image_Surface;
 with Cairo.Png;
 
-with Xi.String_Maps;
+with WL.String_Maps;
 
 package body Css.Images is
 
    package Image_Surface_Maps is
-     new Xi.String_Maps (Cairo.Cairo_Surface, Cairo."=");
+     new WL.String_Maps (Cairo.Cairo_Surface, Cairo."=");
 
    Image_Cache : Image_Surface_Maps.Map;
 
