@@ -920,6 +920,14 @@ package body Css is
          Check_Rule (Element, Styles, Rule);
       end loop;
 
+      if Element.Inline_Style_Rules /= null then
+         Apply_Rule
+           (Current          => Styles,
+            Rule_Specificity =>
+              Selector_Class_Specificity (Inline_Style),
+            Rule             => Element.Inline_Style_Rules);
+      end if;
+
       for Style of Styles loop
          declare
             Name  : constant String :=
