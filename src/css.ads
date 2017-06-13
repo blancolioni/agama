@@ -412,6 +412,11 @@ package Css is
 
    type Css_Rule is access all Css_Rule_Record'Class;
 
+   function Inline_Style_Rules
+     (Element : Css_Element_Interface)
+      return Css_Rule
+      is abstract;
+
    type Style_Sheet_Record is tagged private;
 
    type Style_Sheet is access all Style_Sheet_Record'Class;

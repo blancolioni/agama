@@ -16,6 +16,7 @@ package body Css.Parser is
       return Array_Of_Element_Values;
 
    procedure Parse_Rule;
+   function Parse_Selector_Rule return Css_Rule;
 
    procedure Parse_Meta_Rule
    with Pre => Tok = Tok_Identifier;
@@ -327,6 +328,21 @@ package body Css.Parser is
       end if;
    end Parse_Function_Arguments;
 
+   ------------------------
+   -- Parse_Inline_Style --
+   ------------------------
+
+   function Parse_Inline_Style
+     (Inline_Style : String)
+      return Css_Rule
+   is
+   begin
+      Open_String (Inline_Style);
+      return Rule : constant Css_Rule := Parse_Selector_Rule do
+         Close;
+      end return;
+   end Parse_Inline_Style;
+
    ---------------------
    -- Parse_Meta_Rule --
    ---------------------
@@ -478,32 +494,9 @@ package body Css.Parser is
          Scan;
 
          declare
-            Rule : constant Css_Rule := new Css_Rule_Record;
+            Rule : constant Css_Rule := Parse_Selector_Rule;
          begin
 
-            while Tok = Tok_Identifier loop
-               declare
-                  Property_Name : constant String := Tok_Text;
-               begin
-                  Scan;
-                  if Tok = Tok_Colon then
-                     Scan;
-                  else
-                     Parse_Error ("missing ':'");
-                  end if;
-
-                  declare
-                     Property_Value : constant Css_Element_Value :=
-                                        Parse_Property_Value;
-                  begin
-                     Rule.Styles.Append
-                       ((+Property_Name, Property_Value));
-                     if Tok = Tok_Semicolon then
-                        Scan;
-                     end if;
-                  end;
-               end;
-            end loop;
             if Tok /= Tok_Right_Brace then
                Parse_Error ("missing '}'");
             else
@@ -511,10 +504,46 @@ package body Css.Parser is
             end if;
 
             Current_Style_Sheet.Append_Rule (Selector, Rule);
+
          end;
       else
          Parse_Error ("missing rule");
       end if;
    end Parse_Rule;
+
+   -------------------------
+   -- Parse_Selector_Rule --
+   -------------------------
+
+   function Parse_Selector_Rule return Css_Rule is
+      Rule : constant Css_Rule := new Css_Rule_Record;
+   begin
+
+      while Tok = Tok_Identifier loop
+         declare
+            Property_Name : constant String := Tok_Text;
+         begin
+            Scan;
+            if Tok = Tok_Colon then
+               Scan;
+            else
+               Parse_Error ("missing ':'");
+            end if;
+
+            declare
+               Property_Value : constant Css_Element_Value :=
+                                  Parse_Property_Value;
+            begin
+               Rule.Styles.Append
+                 ((+Property_Name, Property_Value));
+               if Tok = Tok_Semicolon then
+                  Scan;
+               end if;
+            end;
+         end;
+      end loop;
+
+      return Rule;
+   end Parse_Selector_Rule;
 
 end Css.Parser;
