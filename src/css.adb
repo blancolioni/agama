@@ -219,6 +219,10 @@ package body Css is
            (Merge
               (Top_Element.Contents_Layout_Size,
                Child.Get_Layout_Bottom_Right_Size));
+         Flow_Position.Y :=
+           Bottom_Right_Position
+             (Flow_Position, Child.Get_Layout_Size).Y;
+         Flow_Position.X := 0.0;
       end loop;
       Top_Element.Log
         ("contents size: " & Image (Top_Element.Contents_Layout_Size));
