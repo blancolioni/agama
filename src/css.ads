@@ -187,6 +187,14 @@ package Css is
       return access Css_Element_Interface'Class
       is abstract;
 
+   function Child_Index
+     (Element : Css_Element_Interface)
+      return Natural
+      is abstract;
+   --  return the index of this element in its parent
+   --  i.e. 1 if element is the first child, etc
+   --  return 0 if this element does not have a parent
+
    function Contents_Layout_Size
      (Element : Css_Element_Interface)
       return Layout_Size
