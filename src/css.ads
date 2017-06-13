@@ -455,6 +455,10 @@ package Css is
      (Style_Name : String)
       return Css_Element_Value;
 
+   function Is_Inherited
+     (Style_Name : String)
+      return Boolean;
+
 private
 
    procedure Apply_Layout
