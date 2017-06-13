@@ -1,5 +1,7 @@
 with Ada.Characters.Handling;
-with Ada.Strings.Fixed;
+with Ada.Containers.Indefinite_Hashed_Sets;
+with Ada.Strings.Fixed.Hash_Case_Insensitive;
+with Ada.Strings.Fixed.Equal_Case_Insensitive;
 with Ada.Text_IO;
 
 with Css.Paths;
@@ -17,6 +19,13 @@ package body Css is
      new WL.String_Maps (Css_Element_Value);
 
    Default_Style_Value_Map : Style_Value_Maps.Map;
+
+   package Inherited_Style_Sets is
+     new Ada.Containers.Indefinite_Hashed_Sets
+       (String, Ada.Strings.Fixed.Hash_Case_Insensitive,
+        Ada.Strings.Fixed.Equal_Case_Insensitive);
+
+   Inherited_Style : Inherited_Style_Sets.Set;
 
    type Null_Evaluation_Context is
      new Layout_Interface with null record;
@@ -80,6 +89,8 @@ package body Css is
    procedure Read_Colors;
 
    procedure Create_Initial_Evaluators;
+
+   procedure Load_Inherited_Style_Set;
 
    procedure Check_Argument_Count
      (Function_Name  : String;
@@ -190,6 +201,8 @@ package body Css is
       Top_Element.Log
         ("child count:" & Natural'Image (Child_Elements'Length));
       for Child of Child_Elements loop
+         Child.Log ("apply layout (flow position is "
+                    & Image (Flow_Position) & ")");
          Child.Apply_Layout (Flow_Position);
          if Child.Is_Table then
             Child.Apply_Table_Layout;
@@ -225,6 +238,9 @@ package body Css is
          return;
       end if;
 
+      Element.Log ("apply_layout: position is "
+                   & Css_Position'Image (Element.Position));
+
       case Element.Position is
          when Static =>
             Location := Flow;
@@ -244,6 +260,7 @@ package body Css is
               Location.Y + Parent.Measure_Position (Element, Top);
       end case;
 
+      Element.Log ("set position: " & Image (Location));
       Element.Set_Layout_Position (Location);
 
       if Element.Has_Width_Style then
@@ -850,8 +867,9 @@ package body Css is
    is
    begin
       return Element.Style (Name) /= null
-        or else (Element.Parent_Element /= null
-                   and then Element.Parent_Element.Has_Style (Name));
+        or else (Is_Inherited (Name)
+                 and then Element.Parent_Element /= null
+                 and then Element.Parent_Element.Has_Style (Name));
    end Has_Style;
 
    -----------
@@ -888,6 +906,21 @@ package body Css is
       return Value.Value_Type = Function_Value;
    end Is_Function;
 
+   ------------------
+   -- Is_Inherited --
+   ------------------
+
+   function Is_Inherited
+     (Style_Name : String)
+      return Boolean
+   is
+   begin
+      if Inherited_Style.Is_Empty then
+         Load_Inherited_Style_Set;
+      end if;
+      return Inherited_Style.Contains (Style_Name);
+   end Is_Inherited;
+
    ---------------
    -- Is_String --
    ---------------
@@ -905,6 +938,25 @@ package body Css is
    begin
       return Is_Function (Value) and then Function_Name (Value) = "()";
    end Is_Tuple;
+
+   ------------------------------
+   -- Load_Inherited_Style_Set --
+   ------------------------------
+
+   procedure Load_Inherited_Style_Set is
+      use Ada.Text_IO;
+      File : File_Type;
+   begin
+      Open (File, In_File, Css.Paths.Config_File ("inherited-styles.txt"));
+      while not End_Of_File (File) loop
+         declare
+            Style_Name : constant String := Get_Line (File);
+         begin
+            Inherited_Style.Insert (Style_Name);
+         end;
+      end loop;
+      Close (File);
+   end Load_Inherited_Style_Set;
 
    ----------------------
    -- Load_Style_Rules --
