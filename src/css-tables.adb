@@ -49,8 +49,8 @@ package body Css.Tables is
    procedure Apply_Table_Layout
      (Table : Css_Element)
    is
-      Top_Left      : constant Layout_Position := Table.Get_Layout_Position;
-      Current       : Layout_Position := Top_Left;
+      --  Top_Left   : constant Layout_Position := Table.Get_Layout_Position;
+      Current       : Layout_Position := (0.0, 0.0);
       Grid          : Table_Grid;
    begin
       Create_Grid (Table, Grid);
@@ -59,17 +59,17 @@ package body Css.Tables is
 
          for Cell of Row.Cells loop
             if Cell.Col_Span > 0 and then Cell.Row_Span > 0 then
-               Cell.Element.Set_Layout_Position (Current);
+               Cell.Element.Set_Layout_Position ((Current.X, 0.0));
                Cell.Element.Set_Layout_Width (Cell.Width);
                Cell.Element.Set_Layout_Height (Row.Height);
                Cell.Element.Log
-                 ("set position: "
+                 ("set final position: "
                   & Css.Image (Cell.Element.Get_Layout_Position));
             end if;
             Current.X := Current.X + Cell.Width;
          end loop;
 
-         Current.X := Top_Left.X;
+         Current.X := 0.0;
          Current.Y := Current.Y + Row.Height;
       end loop;
    end Apply_Table_Layout;
