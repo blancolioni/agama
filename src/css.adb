@@ -140,6 +140,12 @@ package body Css is
       Selector : Selector_Element)
       return Boolean;
 
+   function Match_State
+     (Element    : Css_Element_Interface'Class;
+      State_Name : String;
+      State_Args : Element_Value_Vectors.Vector)
+      return Boolean;
+
    function Match_String
      (Space_Separated_String : String;
       Search_Text            : String)
@@ -1039,6 +1045,7 @@ package body Css is
       Result : Boolean;
       Text   : constant String :=
                  Ada.Strings.Unbounded.To_String (Selector.Text);
+
    begin
       case Selector.Class is
          when Inline_Style =>
@@ -1053,7 +1060,10 @@ package body Css is
             Result := Text = "*" or else Element.Match_Tag (Text);
       end case;
 
-      return Result;
+      return Result and then
+        Match_State (Element,
+                     Ada.Strings.Unbounded.To_String (Selector.State),
+                     Selector.State_Args);
 
    end Match;
 
@@ -1097,6 +1107,42 @@ package body Css is
       end loop;
       return Match;
    end Match_Class;
+
+   -----------------
+   -- Match_State --
+   -----------------
+
+   function Match_State
+     (Element    : Css_Element_Interface'Class;
+      State_Name : String;
+      State_Args : Element_Value_Vectors.Vector)
+      return Boolean
+   is
+   begin
+      if State_Name = "" then
+         return True;
+      elsif State_Name = "nth-child" then
+         declare
+            Argument : constant String :=
+                         To_String (State_Args.First_Element);
+            Index    : constant Natural := Element.Child_Index;
+         begin
+            if Index = 0 then
+               return False;
+            elsif Argument = "even" then
+               return Index mod 2 = 0;
+            elsif Argument = "odd" then
+               return Index mod 2 /= 0;
+            elsif (for all Ch of Argument => Ch in '0' .. '9') then
+               return Index = Natural'Value (Argument);
+            else
+               return False;
+            end if;
+         end;
+      else
+         return False;
+      end if;
+   end Match_State;
 
    ------------------
    -- Match_String --
