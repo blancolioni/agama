@@ -8,7 +8,9 @@ package body Css.Logging is
 
    procedure Log (Message : String) is
    begin
-      Ada.Text_IO.Put_Line (Message);
+      if False then
+         Ada.Text_IO.Put_Line (Message);
+      end if;
    end Log;
 
    ---------
