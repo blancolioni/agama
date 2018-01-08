@@ -153,9 +153,9 @@ package body Css is
      with Unreferenced;
 
    function Measure
-     (Context_Size : Float;
+     (Context_Size : Css_Float;
       Measurement  : String)
-      return Float;
+      return Css_Float;
 
    -------------------
    -- Add_Evaluator --
@@ -282,8 +282,8 @@ package body Css is
       then
          Size.Constrained_Width := True;
          declare
-            Max_X : Float := 0.0;
-            Right_Value : constant Float :=
+            Max_X : Css_Float := 0.0;
+            Right_Value : constant Css_Float :=
                             Parent.Measure (Element.Right_Style, Right);
          begin
             case Css_Active_Position (Element.Position) is
@@ -310,8 +310,8 @@ package body Css is
       then
          Size.Constrained_Height := True;
          declare
-            Max_Y  : Float := 0.0;
-            Offset : constant Float :=
+            Max_Y  : Css_Float := 0.0;
+            Offset : constant Css_Float :=
                        Parent.Measure (Element.Bottom_Style, Bottom);
 
          begin
@@ -356,7 +356,7 @@ package body Css is
         and then Element.Get_Layout_Size.Constrained_Width
       then
          declare
-            Offset : constant Float :=
+            Offset : constant Css_Float :=
                        Parent.Measure (Element.Right_Style, Right);
          begin
             case Css_Active_Position (Element.Position) is
@@ -379,7 +379,7 @@ package body Css is
         and then Element.Get_Layout_Size.Constrained_Height
       then
          declare
-            Offset : constant Float :=
+            Offset : constant Css_Float :=
                        Parent.Measure (Element.Bottom_Style, Bottom);
          begin
             case Css_Active_Position (Element.Position) is
@@ -468,7 +468,7 @@ package body Css is
    function Border_Pixels
      (Element  : Css_Element_Interface'Class;
       Side     : Css_Side)
-      return Float
+      return Css_Float
    is
       Border_Width_Side : constant String :=
                             "border-width-"
@@ -502,7 +502,7 @@ package body Css is
    function Border_Radius_Pixels
      (Element  : Css_Element_Interface'Class;
       Corner   : Css_Corner)
-      return Float
+      return Css_Float
    is
       pragma Unreferenced (Corner);
       Value : constant Css_Element_Value := Element.Style ("border-radius");
@@ -741,8 +741,8 @@ package body Css is
       declare
          Color : Css_Color :=
                    To_Color (Context.Evaluate (Args (Args'First)));
-         Alpha : constant Float :=
-                   Float'Value
+         Alpha : constant Css_Float :=
+                   Css_Float'Value
                      (To_String (Context.Evaluate (Args (Args'First + 1))));
       begin
          Color.Alpha := Css_Color_Intensity (Alpha * 255.0);
@@ -803,7 +803,7 @@ package body Css is
 
       procedure Shade
         (X : in out Css_Color_Intensity;
-         Factor : Float);
+         Factor : Css_Float);
 
       -----------
       -- Shade --
@@ -811,9 +811,9 @@ package body Css is
 
       procedure Shade
         (X      : in out Css_Color_Intensity;
-         Factor : Float)
+         Factor : Css_Float)
       is
-         New_X : constant Float := Float (X) * Factor;
+         New_X : constant Css_Float := Css_Float (X) * Factor;
       begin
          if New_X < 0.0 then
             X := 0;
@@ -830,8 +830,8 @@ package body Css is
       declare
          Color : Css_Color :=
                    To_Color (Args (Args'First));
-         Factor : constant Float :=
-                    Float'Value
+         Factor : constant Css_Float :=
+                    Css_Float'Value
                       (To_String (Args (Args'First + 1)));
       begin
          Shade (Color.Red, Factor);
@@ -1023,7 +1023,7 @@ package body Css is
    function Margin_Pixels
      (Element : Css_Element_Interface'Class;
       Side    : Css_Side)
-      return Float
+      return Css_Float
    is
       Specific_Name : constant String :=
                         "margin-" & To_Lower (Css_Side'Image (Side));
@@ -1192,7 +1192,7 @@ package body Css is
      (Element : Css_Element_Interface'Class;
       Value   : Css_Element_Value;
       Side    : Css_Side)
-      return Float
+      return Css_Float
    is
       Text : constant String :=
                (if Value = null then "0" else To_String (Value));
@@ -1215,9 +1215,9 @@ package body Css is
    -- Measure --
    -------------
 
-   function Measure (Context_Size : Float;
+   function Measure (Context_Size : Css_Float;
                      Measurement  : String)
-                     return Float
+                     return Css_Float
    is
       use Ada.Characters.Handling;
       Index : Positive := Measurement'First;
@@ -1230,14 +1230,17 @@ package body Css is
       if Index = Measurement'First then
          return 0.0;
       elsif Index > Measurement'Last then
-         return Float'Value (Measurement);
+         return Css_Float'Value (Measurement);
       elsif To_Lower (Measurement (Index .. Measurement'Last)) = "px" then
-         return Float'Value (Measurement (Measurement'First .. Index - 1));
+         return Css_Float'Value (Measurement (Measurement'First .. Index - 1));
+      elsif To_Lower (Measurement (Index .. Measurement'Last)) = "pt" then
+         return Css_Float'Value (Measurement (Measurement'First .. Index - 1))
+           * 16.0 / 12.0;
       elsif Measurement (Index .. Measurement'Last) = "%" then
-         return Float'Value (Measurement (Measurement'First .. Index - 1))
+         return Css_Float'Value (Measurement (Measurement'First .. Index - 1))
            * Context_Size / 100.0;
       else
-         return Float'Value (Measurement);
+         return Css_Float'Value (Measurement);
       end if;
    end Measure;
 
@@ -1248,8 +1251,8 @@ package body Css is
    function Measure
      (Element   : Css_Element_Interface'Class;
       Value     : Css_Element_Value;
-      Available : Float)
-      return Float
+      Available : Css_Float)
+      return Css_Float
    is
    begin
       if Value = null then
@@ -1267,7 +1270,7 @@ package body Css is
      (Parent  : Css_Element_Interface'Class;
       Element : not null access Css_Element_Interface'Class;
       Side    : Css_Side)
-      return Float
+      return Css_Float
    is
       Style_Name : constant String :=
                      Ada.Characters.Handling.To_Lower
@@ -1288,14 +1291,14 @@ package body Css is
               Left.Constrained_Height or else Right.Constrained_Height,
               (if Left.Constrained_Width
                then (if Right.Constrained_Width
-                 then Float'Max (Left.Width, Right.Width)
+                 then Css_Float'Max (Left.Width, Right.Width)
                  else Left.Width)
                elsif Right.Constrained_Width
                then Right.Width
                else 0.0),
               (if Left.Constrained_Height
                then (if Right.Constrained_Height
-                 then Float'Max (Left.Height, Right.Height)
+                 then Css_Float'Max (Left.Height, Right.Height)
                  else Left.Height)
                elsif Right.Constrained_Height
                then Right.Height
@@ -1366,7 +1369,7 @@ package body Css is
    function Padding_Pixels
      (Element : Css_Element_Interface'Class;
       Side    : Css_Side)
-      return Float
+      return Css_Float
    is
       Specific_Name : constant String :=
                         "padding-" & To_Lower (Css_Side'Image (Side));
@@ -1582,7 +1585,7 @@ package body Css is
 
    procedure Set_Layout_Height
      (Layout : in out Layout_Interface'Class;
-      Height : Float)
+      Height : Css_Float)
    is
       Size : Layout_Size := Layout.Get_Layout_Size;
    begin
@@ -1597,7 +1600,7 @@ package body Css is
 
    procedure Set_Layout_Width
      (Layout : in out Layout_Interface'Class;
-      Width  : Float)
+      Width  : Css_Float)
    is
       Size : Layout_Size := Layout.Get_Layout_Size;
    begin

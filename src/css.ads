@@ -5,6 +5,8 @@ private with WL.String_Maps;
 
 package Css is
 
+   subtype Css_Float is Float range Float'Range;
+
    type Css_Color_Intensity is mod 256;
 
    type Css_Color is
@@ -31,7 +33,7 @@ package Css is
 
    type Layout_Position is
       record
-         X, Y : Float := 0.0;
+         X, Y : Css_Float := 0.0;
       end record;
 
    function Image (Position : Layout_Position) return String;
@@ -40,7 +42,7 @@ package Css is
       record
          Constrained_Width  : Boolean := False;
          Constrained_Height : Boolean := False;
-         Width, Height      : Float := 0.0;
+         Width, Height      : Css_Float := 0.0;
       end record;
 
    function Image (Size : Layout_Size) return String;
@@ -114,21 +116,21 @@ package Css is
 
    function Layout_Height
      (Layout : Layout_Interface'Class)
-      return Float
+      return Css_Float
    is (Layout.Get_Layout_Size.Height);
 
    function Layout_Width
      (Layout : Layout_Interface'Class)
-      return Float
+      return Css_Float
    is (Layout.Get_Layout_Size.Width);
 
    procedure Set_Layout_Width
      (Layout : in out Layout_Interface'Class;
-      Width  : Float);
+      Width  : Css_Float);
 
    procedure Set_Layout_Height
      (Layout : in out Layout_Interface'Class;
-      Height : Float);
+      Height : Css_Float);
 
    type Css_Styled_Interface is interface;
 
@@ -243,22 +245,22 @@ package Css is
    function Margin_Pixels
      (Element : Css_Element_Interface'Class;
       Side    : Css_Side)
-      return Float;
+      return Css_Float;
 
    function Border_Pixels
      (Element  : Css_Element_Interface'Class;
       Side     : Css_Side)
-      return Float;
+      return Css_Float;
 
    function Border_Radius_Pixels
      (Element  : Css_Element_Interface'Class;
       Corner   : Css_Corner)
-      return Float;
+      return Css_Float;
 
    function Padding_Pixels
      (Element  : Css_Element_Interface'Class;
       Side     : Css_Side)
-      return Float;
+      return Css_Float;
 
    function Top_Element
      (Element : Css_Element_Interface'Class)
@@ -346,19 +348,19 @@ package Css is
      (Element : Css_Element_Interface'Class;
       Value   : Css_Element_Value;
       Side    : Css_Side)
-      return Float;
+      return Css_Float;
 
    function Measure
      (Element   : Css_Element_Interface'Class;
       Value     : Css_Element_Value;
-      Available : Float)
-      return Float;
+      Available : Css_Float)
+      return Css_Float;
 
    function Measure_Position
      (Parent  : Css_Element_Interface'Class;
       Element : not null access Css_Element_Interface'Class;
       Side    : Css_Side)
-      return Float;
+      return Css_Float;
 
    procedure Apply_Layout
      (Top_Element : not null access Css_Element_Interface'Class);
