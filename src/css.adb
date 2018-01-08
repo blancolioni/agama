@@ -208,7 +208,9 @@ package body Css is
         ("child count:" & Natural'Image (Child_Elements'Length));
       for Child of Child_Elements loop
          Child.Log ("apply layout (flow position is "
-                    & Image (Flow_Position) & ")");
+                    & Image (Flow_Position)
+                    & " float: " & Child.Style_To_String ("float")
+                    & ")");
          Child.Apply_Layout (Flow_Position);
          if Child.Is_Table then
             Child.Apply_Table_Layout;
@@ -219,10 +221,17 @@ package body Css is
            (Merge
               (Top_Element.Contents_Layout_Size,
                Child.Get_Layout_Bottom_Right_Size));
-         Flow_Position.Y :=
-           Bottom_Right_Position
-             (Flow_Position, Child.Get_Layout_Size).Y;
-         Flow_Position.X := 0.0;
+         if Child.Style_To_String ("float") = "left" then
+            Flow_Position.X :=
+              Bottom_Right_Position
+                (Flow_Position, Child.Get_Layout_Size).X;
+            Flow_Position.Y := 0.0;
+         else
+            Flow_Position.Y :=
+              Bottom_Right_Position
+                (Flow_Position, Child.Get_Layout_Size).Y;
+            Flow_Position.X := 0.0;
+         end if;
       end loop;
       Top_Element.Log
         ("contents size: " & Image (Top_Element.Contents_Layout_Size));
