@@ -235,6 +235,17 @@ package body Css is
       end loop;
       Top_Element.Log
         ("contents size: " & Image (Top_Element.Contents_Layout_Size));
+
+      if not Top_Element.Get_Layout_Size.Constrained_Width then
+         Top_Element.Set_Layout_Width
+           (Top_Element.Contents_Layout_Size.Width);
+      end if;
+
+      if not Top_Element.Get_Layout_Size.Constrained_Height then
+         Top_Element.Set_Layout_Height
+           (Top_Element.Contents_Layout_Size.Height);
+      end if;
+
    end Apply_Layout;
 
    ------------------
@@ -356,6 +367,8 @@ package body Css is
             Size.Height := Min_Size.Height;
          end if;
       end;
+
+      Element.Log ("layout-size: " & Image (Size));
 
       Element.Set_Layout_Size (Size);
 
