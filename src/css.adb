@@ -888,6 +888,51 @@ package body Css is
       return Ada.Strings.Unbounded.To_String (Value.Val_Fn_Name);
    end Function_Name;
 
+   -----------------------
+   -- Get_Child_With_Id --
+   -----------------------
+
+   function Get_Child_With_Id
+     (Element : Css_Element_Interface'Class;
+      Id      : String)
+      return Css_Element
+   is
+      Elems : constant Array_Of_Elements := Element.Child_Elements;
+   begin
+      for Elem of Elems loop
+         if Elem.Id = Id then
+            return Elem;
+         end if;
+      end loop;
+
+      for Elem of Elems loop
+         declare
+            Result : constant Css_Element :=
+                       Elem.Get_Child_With_Id (Id);
+         begin
+            if Result /= null then
+               return Result;
+            end if;
+         end;
+      end loop;
+
+      return null;
+   end Get_Child_With_Id;
+
+   --------------------------------
+   -- Get_Children_With_Selector --
+   --------------------------------
+
+   function Get_Children_With_Selector
+     (Element  : Css_Element_Interface'Class;
+      Selector : String)
+      return Array_Of_Elements
+   is
+      pragma Unreferenced (Element, Selector);
+   begin
+      return Result : Array_Of_Elements (1 .. 0);
+   end Get_Children_With_Selector;
+
    ---------------
    -- Has_Style --
    ---------------
@@ -1466,6 +1511,16 @@ package body Css is
            "cannot parse color '" & Text & "'";
    end Parse_Html_Color;
 
+   ------------
+   -- Pixels --
+   ------------
+
+   function Pixels (Px : Integer) return Css_Element_Value is
+      use Ada.Strings, Ada.Strings.Fixed;
+   begin
+      return New_Value (Trim (Integer'Image (Px), Left) & "px");
+   end Pixels;
+
    --------------
    -- Position --
    --------------
@@ -1643,7 +1698,20 @@ package body Css is
       Css_Value : constant Css_Element_Value :=
                     New_Value (Value);
    begin
-      Element.Set_Style (Name, "", Css_Value);
+      Element.Set_Style (Name, Css_Value);
+   end Set_Style;
+
+   ---------------
+   -- Set_Style --
+   ---------------
+
+   procedure Set_Style
+     (Element : in out Css_Styled_Interface'Class;
+      Name    : String;
+      Value   : Css_Element_Value)
+   is
+   begin
+      Element.Set_Style (Name, "", Value);
    end Set_Style;
 
    ---------------

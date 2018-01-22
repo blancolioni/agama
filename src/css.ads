@@ -80,6 +80,8 @@ package Css is
      with Pre => (Is_Function (Value) and then Index <= Argument_Count (Value))
      or else (Is_String (Value) and then Index = 1);
 
+   function Pixels (Px : Integer) return Css_Element_Value;
+
    type Layout_Interface is interface;
 
    function Get_Layout_Position
@@ -145,6 +147,11 @@ package Css is
       State   : String;
       Value   : Css_Element_Value)
    is abstract;
+
+   procedure Set_Style
+     (Element : in out Css_Styled_Interface'Class;
+      Name    : String;
+      Value   : Css_Element_Value);
 
    function Style
      (Element : Css_Styled_Interface;
@@ -225,6 +232,16 @@ package Css is
      (Element : Css_Element_Interface'Class;
       Tag     : String)
       return Array_Of_Elements;
+
+   function Get_Children_With_Selector
+     (Element  : Css_Element_Interface'Class;
+      Selector : String)
+      return Array_Of_Elements;
+
+   function Get_Child_With_Id
+     (Element : Css_Element_Interface'Class;
+      Id      : String)
+      return Css_Element;
 
    function Default_Style_Value
      (Element : Css_Element_Interface;
