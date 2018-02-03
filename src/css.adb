@@ -600,7 +600,7 @@ package body Css is
       Count  : Natural := Result'First - 1;
    begin
       for I in Result'Range loop
-         if Result (I).Tag = Tag then
+         if Result (I).Match_Tag (Tag) then
             Count := Count + 1;
             Result (Count) := Result (I);
          end if;
