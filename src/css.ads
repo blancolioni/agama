@@ -401,8 +401,8 @@ package Css is
       Tag_Name : String)
       return Boolean;
 
-   function Is_Table (Element : Css_Element_Interface'Class) return Boolean
-   is (Element.Match_Tag ("table"));
+   function Is_Table (Element : Css_Element_Interface) return Boolean
+                      is abstract;
 
    function Is_Table_Row (Element : Css_Element_Interface'Class) return Boolean
    is (Element.Match_Tag ("tr"));
