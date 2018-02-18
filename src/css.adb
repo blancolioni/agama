@@ -1696,7 +1696,9 @@ package body Css is
       Value   : String)
    is
       Css_Value : constant Css_Element_Value :=
-                    New_Value (Value);
+                    (if Value = ""
+                     then Css.Null_Element_Value
+                     else New_Value (Value));
    begin
       Element.Set_Style (Name, Css_Value);
    end Set_Style;
