@@ -89,22 +89,22 @@ package body Css.Parser is
 --
 --           declare
 --              use type Xi.Xi_Float;
---              Colour : Xi.Color.Xi_Color :=
+--              Color : Xi.Color.Xi_Color :=
 --                         Xi.Color.Parser.Parse_Html_Color
 --                           (To_String (Args (Args'First)));
 --              Factor : constant Xi.Xi_Float :=
 --                         Xi.Xi_Float'Value
 --                           (To_String (Args (Args'First + 1)));
 --           begin
---              Colour := Xi.Color.Shade (Colour, Factor);
+--              Color := Xi.Color.Shade (Color, Factor);
 --
 --              return '#'
---                & To_Hex_String (Natural (Colour.Red * 255.0))
---                & To_Hex_String (Natural (Colour.Green * 255.0))
---                & To_Hex_String (Natural (Colour.Blue * 255.0))
+--                & To_Hex_String (Natural (Color.Red * 255.0))
+--                & To_Hex_String (Natural (Color.Green * 255.0))
+--                & To_Hex_String (Natural (Color.Blue * 255.0))
 --                & To_Unbounded_String
---                (((if Colour.Alpha /= 1.0
---                 then To_Hex_String (Natural (Colour.Alpha * 255.0))
+--                (((if Color.Alpha /= 1.0
+--                 then To_Hex_String (Natural (Color.Alpha * 255.0))
 --                 else "")));
 --           end;
 --        end Evaluate_Shade;
@@ -243,7 +243,7 @@ package body Css.Parser is
               New_Value ("#" & Tok_Text);
             Scan;
          else
-            Parse_Error ("missing colour");
+            Parse_Error ("missing color");
          end if;
       elsif Tok = Tok_At then
          Scan;
