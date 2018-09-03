@@ -1147,7 +1147,6 @@ package body Css is
       Css_Class : String)
       return Boolean
    is
-      use Ada.Characters.Handling;
       Match : Boolean := False;
 
       procedure Check (Class_Name : String);
@@ -1246,7 +1245,6 @@ package body Css is
       Tag_Name : String)
       return Boolean
    is
-      use Ada.Characters.Handling;
    begin
       return To_Lower (Element.Tag) = Tag_Name;
    end Match_Tag;
