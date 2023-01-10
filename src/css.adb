@@ -232,6 +232,7 @@ package body Css is
                 (Flow_Position, Child.Get_Layout_Size).Y;
             Flow_Position.X := 0.0;
          end if;
+         Child.Log ("new flow position = " & Image (Flow_Position));
       end loop;
       Top_Element.Log
         ("contents size: " & Image (Top_Element.Contents_Layout_Size));
@@ -980,7 +981,8 @@ package body Css is
 
    function Is_Function (Value : Css_Element_Value) return Boolean is
    begin
-      return Value.Value_Type = Function_Value;
+      return Value /= Null_Element_Value
+        and then Value.Value_Type = Function_Value;
    end Is_Function;
 
    ------------------
@@ -1004,7 +1006,8 @@ package body Css is
 
    function Is_String (Value : Css_Element_Value) return Boolean is
    begin
-      return Value.Value_Type = String_Value;
+      return Value /= Null_Element_Value
+        and then Value.Value_Type = String_Value;
    end Is_String;
 
    --------------
@@ -1013,7 +1016,8 @@ package body Css is
 
    function Is_Tuple (Value : Css_Element_Value) return Boolean is
    begin
-      return Is_Function (Value) and then Function_Name (Value) = "()";
+      return Value /= Null_Element_Value
+        and then Is_Function (Value) and then Function_Name (Value) = "()";
    end Is_Tuple;
 
    ------------------------------
