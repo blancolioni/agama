@@ -3,6 +3,8 @@ with Ada.Strings.Unbounded;            use Ada.Strings.Unbounded;
 with Css.Parser.Tokens;     use Css.Parser.Tokens;
 with Css.Parser.Lexical;    use Css.Parser.Lexical;
 
+with Css.Logging;
+
 package body Css.Parser is
 
    function "+" (Value : String) return Unbounded_String
@@ -222,6 +224,7 @@ package body Css.Parser is
      (Path : String)
    is
    begin
+      Css.Logging.Log ("Loading: " & Path);
       Open (Path);
       while Tok /= Tok_End_Of_File loop
          Parse_Rule;
@@ -545,5 +548,20 @@ package body Css.Parser is
 
       return Rule;
    end Parse_Selector_Rule;
+
+   -----------------
+   -- Parse_Value --
+   -----------------
+
+   function Parse_Value
+     (Value : String)
+      return Css_Element_Value
+   is
+   begin
+      Open_String (Value);
+      return Value : constant Css_Element_Value := Parse_Property_Value do
+         Close;
+      end return;
+   end Parse_Value;
 
 end Css.Parser;

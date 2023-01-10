@@ -7,4 +7,8 @@ package Css.Parser is
      (Inline_Style : String)
       return Css_Rule;
 
+   function Parse_Value
+     (Value : String)
+      return Css_Element_Value;
+
 end Css.Parser;
