@@ -180,6 +180,10 @@ package Css is
       return String
       is abstract;
 
+   function Short_Description
+     (Element : Css_Element_Interface'Class)
+      return String;
+
    function Minimum_Size
      (Element    : Css_Element_Interface;
       Constraint : Layout_Size)
@@ -613,5 +617,16 @@ private
       return Layout_Position
    is ((Top_Left.X + (if Size.Constrained_Width then Size.Width else 0.0),
         Top_Left.Y + (if Size.Constrained_Height then Size.Height else 0.0)));
+
+   function Short_Description
+     (Element : Css_Element_Interface'Class)
+      return String
+   is (Element.Tag
+       & (if Element.Classes /= ""
+         then " ." & Element.Classes
+         else "")
+       & (if Element.Id /= ""
+         then " #" & Element.Id
+         else ""));
 
 end Css;
