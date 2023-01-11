@@ -82,7 +82,7 @@ package Css is
 
    function Pixels (Px : Integer) return Css_Element_Value;
 
-   type Layout_Interface is interface;
+   type Layout_Interface is limited interface;
 
    function Get_Layout_Position
      (Layout : Layout_Interface)
@@ -134,7 +134,7 @@ package Css is
      (Layout : in out Layout_Interface'Class;
       Height : Css_Float);
 
-   type Css_Styled_Interface is interface;
+   type Css_Styled_Interface is limited interface;
 
    procedure Create_Style
      (Styles : in out Css_Styled_Interface;
@@ -159,7 +159,7 @@ package Css is
       return Css_Element_Value
       is abstract;
 
-   type Css_Element_Interface is interface
+   type Css_Element_Interface is limited interface
      and Layout_Interface
      and Css_Styled_Interface;
 
